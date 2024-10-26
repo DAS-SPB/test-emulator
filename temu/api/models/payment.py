@@ -5,20 +5,20 @@ REQUEST_CURRENCY = "EUR"
 REQUEST_SUBCLASS = "subclass"
 
 
-class Data(BaseModel):
+class DataModel(BaseModel):
     amount: float
     currency: str = REQUEST_CURRENCY
 
 
-class Customer(BaseModel):
+class CustomerModel(BaseModel):
     full_name: str = Field(min_length=1, max_length=256)
     email: str = Field(min_length=5, max_length=256)
 
 
-class PaymentRequest(BaseModel):
-    order_id: str = Field(min_length=5, max_length=10)
-    data: Data
-    customer: List[Customer]
+class PaymentRequestModel(BaseModel):
+    order_id: str = Field(min_length=5, max_length=20)
+    data: DataModel
+    customer: List[CustomerModel]
     subclass: str = REQUEST_SUBCLASS
 
     model_config = {
@@ -43,12 +43,12 @@ class PaymentRequest(BaseModel):
     }
 
 
-class Payment(BaseModel):
+class PaymentModel(BaseModel):
     reference: str
 
 
-class PaymentResponse(BaseModel):
-    payment: Optional[Payment] = None
+class PaymentResponseModel(BaseModel):
+    payment: Optional[PaymentModel] = None
     code: int
     message: str
 
