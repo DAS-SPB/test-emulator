@@ -1,13 +1,22 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
+from enum import Enum
 
 REQUEST_CURRENCY = "EUR"
 REQUEST_SUBCLASS = "subclass"
 
 
+class CurrencyEnum(str, Enum):
+    currency = "EUR"
+
+
+class SubclassEnum(str, Enum):
+    subclass = "subclass"
+
+
 class DataModel(BaseModel):
     amount: float
-    currency: str = REQUEST_CURRENCY
+    currency: CurrencyEnum
 
 
 class CustomerModel(BaseModel):
@@ -19,7 +28,8 @@ class PaymentRequestModel(BaseModel):
     order_id: str = Field(min_length=5, max_length=20)
     data: DataModel
     customer: List[CustomerModel]
-    subclass: str = REQUEST_SUBCLASS
+    subclass: SubclassEnum
+    callback_url: str
 
     model_config = {
         "json_schema_extra": {
@@ -36,7 +46,8 @@ class PaymentRequestModel(BaseModel):
                             "email": "email@email.com"
                         }
                     ],
-                    "subclass": "subclass"
+                    "subclass": "subclass",
+                    "callback_url": "https://webhook.site/xxx"
                 }
             ]
         }
@@ -49,8 +60,8 @@ class PaymentModel(BaseModel):
 
 class PaymentResponseModel(BaseModel):
     payment: Optional[PaymentModel] = None
-    code: int
-    message: str
+    code: Optional[int] = None
+    message: Optional[str] = None
 
     model_config = {
         "json_schema_extra": {
