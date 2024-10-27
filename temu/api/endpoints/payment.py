@@ -41,7 +41,9 @@ RESPONSE_CASES = {
 @router.post("/payment", response_model=PaymentResponseModel)
 async def payment_creation(request: PaymentRequestModel, response: Response,
                            signed: None = Depends(signature_verification)):
-    await insert_order(data=request.dict(), collection=collection_orders)
+    order_data = request.dict()
+    order_data.update({"status": "PENDING"})
+    await insert_order(data=order_data, collection=collection_orders)
 
     case = RESPONSE_CASES.get(request.data.amount, None)
 
