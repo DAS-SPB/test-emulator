@@ -42,7 +42,15 @@ RESPONSE_CASES = {
 async def payment_creation(request: PaymentRequestModel, response: Response,
                            signed: None = Depends(signature_verification)):
     order_data = request.model_dump()
-    order_data.update({"status": "PENDING"})
+    reference = str(uuid.uuid4())
+    
+    order_data.update(
+        {
+            "reference": reference,
+            "status": "PENDING"
+        }
+    )
+
     await insert_order(data=order_data, collection=collection_orders)
 
     case = RESPONSE_CASES.get(request.data.amount, None)
@@ -54,7 +62,7 @@ async def payment_creation(request: PaymentRequestModel, response: Response,
     else:
         response.status_code = status.HTTP_200_OK
         response_body = PaymentResponseModel(
-            payment={"reference": str(uuid.uuid4())},
+            payment={"reference": reference},
             code=10,
             message="Created successfully"
         )
