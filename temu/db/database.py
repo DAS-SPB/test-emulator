@@ -25,16 +25,22 @@ async def find_order(data: dict, collection: AsyncIOMotorCollection):
 
 
 async def update_order(data: dict, collection: AsyncIOMotorCollection) -> UpdateResult:
-    data_copy = data.copy()
     query = {
-        "order_id": data.get("order_id"),
-        "status": data.get("status"),
-        "amount": data.get("amount")
+        "order_id": data.get("order_id")
+    }
+    data_copy = {
+        "data": {
+            "amount": data.get("amount")
+        },
+        "status": data.get("status")
     }
     try:
         updated_record = await collection.update_one(filter=query, update={"$set": data_copy})
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail=f"Failed to update data in MongoDB: {str(e)}")
+
+    if updated_record.modified_count == 0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
 
     return updated_record

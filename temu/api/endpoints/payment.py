@@ -11,14 +11,14 @@ router = APIRouter()
 # several error cases as an example
 RESPONSE_CASES = {
     # HTTP 200, only mandatory fields
-    101.00: {
+    101: {
         "status_code": status.HTTP_200_OK,
         "response_body": lambda: PaymentResponseModel(
             payment={"reference": str(uuid.uuid4())}
         )
     },
     # HTTP 400, error response
-    102.00: {
+    102: {
         "status_code": status.HTTP_400_BAD_REQUEST,
         "response_body": lambda: PaymentResponseModel(
             code=5,
@@ -26,7 +26,7 @@ RESPONSE_CASES = {
         )
     },
     # HTTP 200, unsigned response
-    103.00: {
+    103: {
         "status_code": status.HTTP_200_OK,
         "response_body": lambda: PaymentResponseModel(
             payment={"reference": str(uuid.uuid4())},
@@ -41,7 +41,7 @@ RESPONSE_CASES = {
 @router.post("/payment", response_model=PaymentResponseModel)
 async def payment_creation(request: PaymentRequestModel, response: Response,
                            signed: None = Depends(signature_verification)):
-    order_data = request.dict()
+    order_data = request.model_dump()
     order_data.update({"status": "PENDING"})
     await insert_order(data=order_data, collection=collection_orders)
 

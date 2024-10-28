@@ -15,7 +15,7 @@ class SubclassEnum(str, Enum):
 
 
 class DataModel(BaseModel):
-    amount: float
+    amount: int | float
     currency: CurrencyEnum
 
 
