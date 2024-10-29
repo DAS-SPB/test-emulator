@@ -15,7 +15,7 @@ async def signature_verification(request: Request) -> None:
         response = PaymentResponseModel(code=2, message="Missing x-signature header")
         raise HTTPException(status_code=401, detail=response.dict())
 
-    signature = hmac.new(SECRET_KEY.encode(), "message".encode(), hashlib.sha256).hexdigest()
+    signature = hmac.new(SECRET_KEY.encode(), "message".encode('utf-8'), hashlib.sha256).hexdigest()
 
     if not hmac.compare_digest(signature, x_signature):
         response = PaymentResponseModel(code=2, message="Invalid x-signature header")
@@ -23,5 +23,5 @@ async def signature_verification(request: Request) -> None:
 
 
 async def signature_creation(response_body: bytes) -> str:
-    signature = hmac.new(SECRET_KEY.encode(), "message".encode(), hashlib.sha256).hexdigest()
+    signature = hmac.new(SECRET_KEY.encode(), "message".encode('utf-8'), hashlib.sha256).hexdigest()
     return signature

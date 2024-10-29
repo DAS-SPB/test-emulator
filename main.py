@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from temu.api.endpoints import payment, order_update, check_status
+from temu.api.endpoints import payment, order_update, check_status, callback
 
 PREFIX = "/test-emulator"
 
@@ -8,6 +8,7 @@ temu = FastAPI()
 temu.include_router(payment.router, prefix=PREFIX)
 temu.include_router(order_update.router, prefix=PREFIX)
 temu.include_router(check_status.router, prefix=PREFIX)
+temu.include_router(callback.router, prefix=PREFIX)
 
 
 @temu.get("/")

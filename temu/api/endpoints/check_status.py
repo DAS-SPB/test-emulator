@@ -79,7 +79,7 @@ async def check_status(request: CheckStatusRequestModel, response: Response,
     if unsigned:
         return response_body
 
-    response_body_bytes = str(response_body.dict()).encode()
+    response_body_bytes = str(response_body.model_dump()).encode('utf-8')
     signature = await signature_creation(response_body_bytes)
     response.headers["x-signature"] = signature
 
