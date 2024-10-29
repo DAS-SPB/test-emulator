@@ -7,11 +7,11 @@ REQUEST_SUBCLASS = "subclass"
 
 
 class CurrencyEnum(str, Enum):
-    currency = "EUR"
+    currency = REQUEST_CURRENCY
 
 
 class SubclassEnum(str, Enum):
-    subclass = "subclass"
+    subclass = REQUEST_SUBCLASS
 
 
 class DataModel(BaseModel):
