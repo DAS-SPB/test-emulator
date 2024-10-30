@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, Depends, Response
 from ..models.payment import PaymentRequestModel, PaymentResponseModel
 from ..signature.signature import signature_verification, signature_creation
-from ...db.database import insert_order
+from ...db import database
 from ...db.connection import collection_orders
 
 import uuid
@@ -51,7 +51,7 @@ async def payment_creation(request: PaymentRequestModel, response: Response,
         }
     )
 
-    await insert_order(data=order_data, collection=collection_orders)
+    await database.insert_order(data=order_data, collection=collection_orders)
 
     case = RESPONSE_CASES.get(request.data.amount, None)
 
