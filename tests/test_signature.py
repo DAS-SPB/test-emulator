@@ -12,7 +12,7 @@ async def test_valid_signature(client, valid_payment_request, mocker):
     mock_insert_order = mocker.patch("temu.db.database.insert_order", new_callable=AsyncMock)
     mock_insert_order.return_value = None
 
-    correct_signature = await signature_creation(json.dumps(valid_payment_request.model_dump()).encode('utf-8'))
+    correct_signature = await signature_creation(valid_payment_request.model_dump())
     response = client.post(
         "/test-emulator/payment",
         json=valid_payment_request.dict(),

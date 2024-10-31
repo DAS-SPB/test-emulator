@@ -1,6 +1,7 @@
 from fastapi import Request, HTTPException
 import hashlib
 import hmac
+import json
 
 from temu.settings.config import settings
 from ..models.payment import PaymentResponseModel
@@ -14,13 +15,14 @@ async def signature_verification(request: Request):
         response = PaymentResponseModel(code=2, message="Missing x-signature header")
         raise HTTPException(status_code=401, detail=response.dict())
 
-    request_body: bytes = await request.body()
-    signature = hmac.new(SECRET_KEY.encode(), request_body, hashlib.sha256).hexdigest()
+    request_body = await request.json()
+    signature = await signature_creation(request_body)
 
     if not hmac.compare_digest(signature, x_signature):
         response = PaymentResponseModel(code=2, message="Invalid x-signature header")
         raise HTTPException(status_code=401, detail=response.dict())
 
 
-async def signature_creation(response_body: bytes) -> str:
-    return hmac.new(SECRET_KEY.encode(), response_body, hashlib.sha256).hexdigest()
+async def signature_creation(response_body: dict) -> str:
+    return hmac.new(SECRET_KEY.encode(), json.dumps(response_body, separators=(',', ':')).encode('utf-8'),
+                    hashlib.sha256).hexdigest()

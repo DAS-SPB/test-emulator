@@ -1,6 +1,7 @@
 import httpx
 import json
 from fastapi import APIRouter, HTTPException, status
+
 from ..models.callback import CallbackRequestModel, CallbackQueryModel, CallbackResponseModel
 from ..signature.signature import signature_creation
 from ...db import database
@@ -68,7 +69,7 @@ async def callback_request(request: CallbackRequestModel):
         unsigned = False
 
     query_body_dict = query_body.model_dump()
-    query_signature = await signature_creation(json.dumps(query_body_dict).encode('utf-8'))
+    query_signature = await signature_creation(query_body_dict)
 
     async with httpx.AsyncClient() as client:
         try:

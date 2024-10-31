@@ -1,4 +1,5 @@
 from fastapi import APIRouter, status, Depends, Response
+
 from ..models.check_status import CheckStatusRequestModel, CheckStatusResponseModel
 from ..signature.signature import signature_verification, signature_creation
 from ...db import database
@@ -79,8 +80,7 @@ async def check_status(request: CheckStatusRequestModel, response: Response,
     if unsigned:
         return response_body
 
-    response_body_bytes = str(response_body.model_dump()).encode('utf-8')
-    signature = await signature_creation(response_body_bytes)
+    signature = await signature_creation(response_body.model_dump())
     response.headers["x-signature"] = signature
 
     return response_body
