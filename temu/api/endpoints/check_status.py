@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, Depends, Response
 from ..models.check_status import CheckStatusRequestModel, CheckStatusResponseModel
 from ..signature.signature import signature_verification, signature_creation
-from ...db.database import find_order
+from ...db import database
 from ...db.connection import collection_orders
 
 router = APIRouter()
@@ -54,7 +54,7 @@ async def error_case_response(response_data: dict) -> dict:
 @router.post("/check-status", response_model=CheckStatusResponseModel)
 async def check_status(request: CheckStatusRequestModel, response: Response,
                        signed: None = Depends(signature_verification)):
-    order_data = await find_order(data=request.model_dump(), collection=collection_orders)
+    order_data = await database.find_order(data=request.model_dump(), collection=collection_orders)
     amount = order_data.get("data", {}).get("amount")
 
     if amount in ERROR_CASES:

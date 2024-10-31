@@ -3,7 +3,7 @@ import json
 from fastapi import APIRouter, HTTPException, status
 from ..models.callback import CallbackRequestModel, CallbackQueryModel, CallbackResponseModel
 from ..signature.signature import signature_creation
-from ...db.database import find_order
+from ...db import database
 from ...db.connection import collection_orders
 
 router = APIRouter()
@@ -45,7 +45,7 @@ async def error_case_query(order_data: dict) -> dict:
 
 @router.post("/callback-request", response_model=CallbackResponseModel, status_code=status.HTTP_200_OK)
 async def callback_request(request: CallbackRequestModel):
-    order_data = await find_order(data=request.model_dump(), collection=collection_orders)
+    order_data = await database.find_order(data=request.model_dump(), collection=collection_orders)
 
     callback_url = order_data.get('callback_url')
     amount = order_data.get("data", {}).get("amount")
