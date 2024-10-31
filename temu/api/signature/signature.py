@@ -8,14 +8,14 @@ from ..models.payment import PaymentResponseModel
 SECRET_KEY = settings.SECRET_KEY
 
 
-async def signature_verification(request: Request) -> None:
-    # body = await request.body()
+async def signature_verification(request: Request):
     x_signature = request.headers.get("x-signature")
     if not x_signature:
         response = PaymentResponseModel(code=2, message="Missing x-signature header")
         raise HTTPException(status_code=401, detail=response.dict())
 
-    signature = hmac.new(SECRET_KEY.encode(), "message".encode('utf-8'), hashlib.sha256).hexdigest()
+    request_body: bytes = await request.body()
+    signature = hmac.new(SECRET_KEY.encode(), request_body, hashlib.sha256).hexdigest()
 
     if not hmac.compare_digest(signature, x_signature):
         response = PaymentResponseModel(code=2, message="Invalid x-signature header")
@@ -23,5 +23,4 @@ async def signature_verification(request: Request) -> None:
 
 
 async def signature_creation(response_body: bytes) -> str:
-    signature = hmac.new(SECRET_KEY.encode(), "message".encode('utf-8'), hashlib.sha256).hexdigest()
-    return signature
+    return hmac.new(SECRET_KEY.encode(), response_body, hashlib.sha256).hexdigest()
