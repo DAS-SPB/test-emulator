@@ -14,10 +14,9 @@ def client():
 def valid_payment_request():
     return PaymentRequestModel(
         order_id="12345",
-        data=DataModel(amount=100.0, currency=CurrencyEnum.currency),
+        data=DataModel(amount=100.22, currency=CurrencyEnum.currency),
         customer=[
-            CustomerModel(full_name="John Doe", email="johndoe@example.com"),
-            CustomerModel(full_name="Jane Smith", email="janesmith@example.com"),
+            CustomerModel(full_name="John Doe", email="johndoe@example.com")
         ],
         subclass=SubclassEnum.subclass,
         callback_url="https://example.com/callback"
