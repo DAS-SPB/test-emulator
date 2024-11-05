@@ -1,5 +1,5 @@
 import httpx
-import json
+import logging
 from fastapi import APIRouter, HTTPException, status
 
 from ..models.callback import CallbackRequestModel, CallbackQueryModel, CallbackResponseModel
@@ -8,6 +8,7 @@ from ...db import database
 from ...db.connection import collection_orders
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 # several error cases as an example
 ERROR_CASES = {301, 302}
@@ -46,6 +47,8 @@ async def error_case_query(order_data: dict) -> dict:
 
 @router.post("/callback-request", response_model=CallbackResponseModel, status_code=status.HTTP_200_OK)
 async def callback_request(request: CallbackRequestModel):
+    logger.info(f"Callback request. Incoming request with payload: {request.json()}")
+
     order_data = await database.find_order(data=request.model_dump(), collection=collection_orders)
 
     callback_url = order_data.get('callback_url')
@@ -74,17 +77,25 @@ async def callback_request(request: CallbackRequestModel):
     async with httpx.AsyncClient() as client:
         try:
             headers = {"x-signature": query_signature} if not unsigned else {}
+            logger.info(
+                f"Sending callback request to {callback_url} with additional headers: {headers}"
+                f" and payload: {query_body_dict}")
+
             callback_response = await client.post(
                 url=callback_url,
                 json=query_body_dict,
                 headers=headers
             )
         except httpx.RequestError as e:
+            logger.error(f"Failed to send callback request: {str(e)}")
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                                 detail=f"Failed to send callback request: {str(e)}")
 
     if callback_response.status_code != 200:
+        logger.error(f"Callback request failed with status code {callback_response.status_code}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail=f"Callback request failed with status code {callback_response.status_code}")
+
+    logger.info(f"Callback request succeeded with status code {callback_response.status_code}")
 
     return CallbackResponseModel(message="Callback request successfully sent")

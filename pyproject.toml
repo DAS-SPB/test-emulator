@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "testemulator"
-version = "0.0.1"
+version = "0.1.0"
 description = "Тестовый эмулятор"
 authors = ["Anton, Kirill"]
 readme = "README.md"
@@ -17,6 +17,7 @@ pytest = "^8.3.3"
 pytest-asyncio = "^0.24.0"
 python-dotenv = "^1.0.1"
 pytest-mock = "^3.14.0"
+pyyaml = "^6.0.2"
 
 
 [build-system]

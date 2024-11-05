@@ -1,13 +1,15 @@
-from fastapi import APIRouter, status, Depends, Response
+import logging
+import uuid
+
+from fastapi import APIRouter, status, Depends, Request, Response
 
 from ..models.payment import PaymentRequestModel, PaymentResponseModel
 from ..signature.signature import signature_verification, signature_creation
 from ...db import database
 from ...db.connection import collection_orders
 
-import uuid
-
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 # several error cases as an example
 RESPONSE_CASES = {
@@ -40,11 +42,13 @@ RESPONSE_CASES = {
 
 
 @router.post("/payment", response_model=PaymentResponseModel)
-async def payment_creation(request: PaymentRequestModel, response: Response,
+async def payment_creation(request: Request, payload: PaymentRequestModel, response: Response,
                            signed: None = Depends(signature_verification)):
-    order_data = request.model_dump()
+    logger.info(f"Make payment. Incoming request with headers: {request.headers} and payload: {payload.json()}")
+
+    order_data = payload.model_dump()
     reference = str(uuid.uuid4())
-    
+
     order_data.update(
         {
             "reference": reference,
@@ -54,7 +58,7 @@ async def payment_creation(request: PaymentRequestModel, response: Response,
 
     await database.insert_order(data=order_data, collection=collection_orders)
 
-    case = RESPONSE_CASES.get(request.data.amount, None)
+    case = RESPONSE_CASES.get(payload.data.amount, None)
 
     if case:
         response.status_code = case.get("status_code")
@@ -69,10 +73,12 @@ async def payment_creation(request: PaymentRequestModel, response: Response,
         )
         unsigned = False
 
-    if unsigned:
-        return response_body
+    if not unsigned:
+        signature = await signature_creation(response_body.model_dump())
+        response.headers["x-signature"] = signature
 
-    signature = await signature_creation(response_body.model_dump())
-    response.headers["x-signature"] = signature
+    logger.info(
+        f"Make payment. Outgoing response with status: {response.status_code}, additional headers: {response.headers}"
+        f" and payload: {response_body.json()}")
 
     return response_body

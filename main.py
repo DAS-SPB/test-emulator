@@ -1,3 +1,6 @@
+import logging.config
+import os
+import yaml
 from fastapi import FastAPI
 
 from temu.api.endpoints import payment, order_update, check_status, callback
@@ -11,8 +14,25 @@ temu.include_router(check_status.router, prefix=PREFIX)
 temu.include_router(callback.router, prefix=PREFIX)
 
 
+def setup_logging() -> None:
+    config_path = os.path.join('temu', 'settings', 'log_config.yaml')
+
+    try:
+        with open(config_path, 'rt') as config_file:
+            log_config = yaml.safe_load(config_file.read())
+        logging.config.dictConfig(log_config)
+    except Exception as e:
+        logging.basicConfig(level=logging.WARN)
+        logging.error("Error at logging config load: %s", e)
+
+
+setup_logging()
+logger = logging.getLogger(__name__)
+
+
 @temu.get("/")
 def read_root():
+    logger.info("Incoming request to the main page")
     return {"message": "Welcome to test emulator"}
 
 

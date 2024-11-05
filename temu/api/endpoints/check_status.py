@@ -1,4 +1,5 @@
-from fastapi import APIRouter, status, Depends, Response
+import logging
+from fastapi import APIRouter, status, Depends, Request, Response
 
 from ..models.check_status import CheckStatusRequestModel, CheckStatusResponseModel
 from ..signature.signature import signature_verification, signature_creation
@@ -6,6 +7,7 @@ from ...db import database
 from ...db.connection import collection_orders
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 # several error cases as an example
 ERROR_CASES = {201, 202, 203}
@@ -53,9 +55,11 @@ async def error_case_response(response_data: dict) -> dict:
 
 
 @router.post("/check-status", response_model=CheckStatusResponseModel)
-async def check_status(request: CheckStatusRequestModel, response: Response,
+async def check_status(request: Request, payload: CheckStatusRequestModel, response: Response,
                        signed: None = Depends(signature_verification)):
-    order_data = await database.find_order(data=request.model_dump(), collection=collection_orders)
+    logger.info(f"Check status. Incoming request with headers: {request.headers} and payload: {payload.json()}")
+
+    order_data = await database.find_order(data=payload.model_dump(), collection=collection_orders)
     amount = order_data.get("data", {}).get("amount")
 
     if amount in ERROR_CASES:
@@ -77,10 +81,12 @@ async def check_status(request: CheckStatusRequestModel, response: Response,
         )
         unsigned = False
 
-    if unsigned:
-        return response_body
+    if not unsigned:
+        signature = await signature_creation(response_body.model_dump())
+        response.headers["x-signature"] = signature
 
-    signature = await signature_creation(response_body.model_dump())
-    response.headers["x-signature"] = signature
+    logger.info(
+        f"Check status. Outgoing response with status: {response.status_code}, additional headers: {response.headers}"
+        f" and payload: {response_body.json()}")
 
     return response_body
