@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import Optional, List
 from enum import Enum
 
@@ -21,7 +21,7 @@ class DataModel(BaseModel):
 
 class CustomerModel(BaseModel):
     full_name: str = Field(min_length=1, max_length=256)
-    email: str = Field(min_length=5, max_length=256)
+    email: EmailStr
 
 
 class PaymentRequestModel(BaseModel):

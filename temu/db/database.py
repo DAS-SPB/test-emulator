@@ -12,7 +12,7 @@ async def insert_order(data: dict, collection: AsyncIOMotorCollection) -> Insert
     except Exception as e:
         logger.error(f"Failed to insert data to MongoDB: {str(e)}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail=f"Failed to insert data to MongoDB: {str(e)}")
+                            detail={"message": f"Failed to insert data to MongoDB: {str(e)}"})
 
     return inserted_data
 
@@ -26,11 +26,11 @@ async def find_order(data: dict, collection: AsyncIOMotorCollection):
     except Exception as e:
         logger.error(f"Failed to fetch data from MongoDB: {str(e)}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail=f"Failed to fetch data from MongoDB: {str(e)}")
+                            detail={"message": f"Failed to fetch data from MongoDB: {str(e)}"})
 
     if not fetched_data:
         logger.error("Order not found")
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"message": "Order not found"})
 
     return fetched_data
 
@@ -50,10 +50,10 @@ async def update_order(data: dict, collection: AsyncIOMotorCollection) -> Update
     except Exception as e:
         logger.error(f"Failed to update data in MongoDB: {str(e)}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail=f"Failed to update data in MongoDB: {str(e)}")
+                            detail={"message": f"Failed to update data in MongoDB: {str(e)}"})
 
     if updated_record.modified_count == 0:
         logger.error("Order not found")
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"message": "Order not found"})
 
     return updated_record
