@@ -78,7 +78,7 @@ async def test_successful_check_status_request(client, valid_check_status_reques
     temu_response = client.post(
         "/test-emulator/check-status",
         json=valid_check_status_request,
-        headers={"x-signature": await signature_creation(valid_check_status_request)},
+        headers={"x-signature": await signature_creation(valid_check_status_request)}
     )
 
     check_check_status_response(
@@ -100,7 +100,7 @@ async def test_empty_signature(client, valid_check_status_request, mock_find_ord
 
     temu_response = client.post(
         "/test-emulator/check-status",
-        json=valid_check_status_request,
+        json=valid_check_status_request
     )
 
     check_check_status_response(
@@ -123,7 +123,7 @@ async def test_invalid_signature(client, valid_check_status_request, mock_find_o
     temu_response = client.post(
         "/test-emulator/check-status",
         json=valid_check_status_request,
-        headers={"x-signature": "invalid_signature"},
+        headers={"x-signature": "invalid_signature"}
     )
 
     check_check_status_response(
@@ -146,7 +146,7 @@ async def test_check_status_case_201(client, valid_check_status_request, mock_fi
     temu_response = client.post(
         "/test-emulator/check-status",
         json=valid_check_status_request,
-        headers={"x-signature": await signature_creation(valid_check_status_request)},
+        headers={"x-signature": await signature_creation(valid_check_status_request)}
     )
 
     check_check_status_response(
@@ -169,7 +169,7 @@ async def test_check_status_case_202(client, valid_check_status_request, mock_fi
     temu_response = client.post(
         "/test-emulator/check-status",
         json=valid_check_status_request,
-        headers={"x-signature": await signature_creation(valid_check_status_request)},
+        headers={"x-signature": await signature_creation(valid_check_status_request)}
     )
 
     check_check_status_response(
@@ -192,7 +192,7 @@ async def test_check_status_case_203(client, valid_check_status_request, mock_fi
     temu_response = client.post(
         "/test-emulator/check-status",
         json=valid_check_status_request,
-        headers={"x-signature": await signature_creation(valid_check_status_request)},
+        headers={"x-signature": await signature_creation(valid_check_status_request)}
     )
 
     check_check_status_response(
@@ -219,7 +219,6 @@ async def test_check_status_db_error(client, valid_check_status_request, mock_fi
         "/test-emulator/check-status",
         json=valid_check_status_request,
         headers={"x-signature": await signature_creation(valid_check_status_request)}
-
     )
 
     check_check_status_response(

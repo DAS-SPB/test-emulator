@@ -53,8 +53,15 @@ async def test_successful_payment_creation(client, valid_payment_request, mock_i
         headers={"x-signature": await signature_creation(valid_payment_request)}
     )
 
-    check_payment_response(response=temu_response, expected_status=200, expected_signature=True, error_response=False,
-                           reference=True, expected_code=10, expected_message="Created successfully")
+    check_payment_response(
+        response=temu_response,
+        expected_status=200,
+        expected_signature=True,
+        error_response=False,
+        reference=True,
+        expected_code=10,
+        expected_message="Created successfully"
+    )
 
 
 @pytest.mark.asyncio
@@ -63,11 +70,18 @@ async def test_empty_signature(client, valid_payment_request, mock_insert_order)
 
     temu_response = client.post(
         "/test-emulator/payment",
-        json=valid_payment_request,
+        json=valid_payment_request
     )
 
-    check_payment_response(response=temu_response, expected_status=401, expected_signature=False, error_response=True,
-                           reference=False, expected_code=2, expected_message="Missing x-signature header")
+    check_payment_response(
+        response=temu_response,
+        expected_status=401,
+        expected_signature=False,
+        error_response=True,
+        reference=False,
+        expected_code=2,
+        expected_message="Missing x-signature header"
+    )
 
 
 @pytest.mark.asyncio
@@ -80,8 +94,15 @@ async def test_invalid_signature(client, valid_payment_request, mock_insert_orde
         headers={"x-signature": "invalid_signature"}
     )
 
-    check_payment_response(response=temu_response, expected_status=401, expected_signature=False, error_response=True,
-                           reference=False, expected_code=2, expected_message="Invalid x-signature header")
+    check_payment_response(
+        response=temu_response,
+        expected_status=401,
+        expected_signature=False,
+        error_response=True,
+        reference=False,
+        expected_code=2,
+        expected_message="Invalid x-signature header"
+    )
 
 
 @pytest.mark.asyncio
@@ -92,11 +113,17 @@ async def test_payment_creation_case_101(client, payment_request_case_101, mock_
         "/test-emulator/payment",
         json=payment_request_case_101,
         headers={"x-signature": await signature_creation(payment_request_case_101)}
-
     )
 
-    check_payment_response(response=temu_response, expected_status=200, expected_signature=True, error_response=False,
-                           reference=True, expected_code=None, expected_message=None)
+    check_payment_response(
+        response=temu_response,
+        expected_status=200,
+        expected_signature=True,
+        error_response=False,
+        reference=True,
+        expected_code=None,
+        expected_message=None
+    )
 
 
 @pytest.mark.asyncio
@@ -107,11 +134,17 @@ async def test_payment_creation_case_102(client, payment_request_case_102, mock_
         "/test-emulator/payment",
         json=payment_request_case_102,
         headers={"x-signature": await signature_creation(payment_request_case_102)}
-
     )
 
-    check_payment_response(response=temu_response, expected_status=400, expected_signature=True, error_response=False,
-                           reference=False, expected_code=5, expected_message="Test error response")
+    check_payment_response(
+        response=temu_response,
+        expected_status=400,
+        expected_signature=True,
+        error_response=False,
+        reference=False,
+        expected_code=5,
+        expected_message="Test error response"
+    )
 
 
 @pytest.mark.asyncio
@@ -122,11 +155,17 @@ async def test_payment_creation_case_103(client, payment_request_case_103, mock_
         "/test-emulator/payment",
         json=payment_request_case_103,
         headers={"x-signature": await signature_creation(payment_request_case_103)}
-
     )
 
-    check_payment_response(response=temu_response, expected_status=200, expected_signature=False, error_response=False,
-                           reference=True, expected_code=10, expected_message="Created successfully")
+    check_payment_response(
+        response=temu_response,
+        expected_status=200,
+        expected_signature=False,
+        error_response=False,
+        reference=True,
+        expected_code=10,
+        expected_message="Created successfully"
+    )
 
 
 @pytest.mark.asyncio
@@ -140,9 +179,14 @@ async def test_payment_creation_db_error(client, valid_payment_request, mock_ins
         "/test-emulator/payment",
         json=valid_payment_request,
         headers={"x-signature": await signature_creation(valid_payment_request)}
-
     )
 
-    check_payment_response(response=temu_response, expected_status=500, expected_signature=False, error_response=True,
-                           reference=False, expected_code=None,
-                           expected_message="Failed to insert data to MongoDB: Test Exception")
+    check_payment_response(
+        response=temu_response,
+        expected_status=500,
+        expected_signature=False,
+        error_response=True,
+        reference=False,
+        expected_code=None,
+        expected_message="Failed to insert data to MongoDB: Test Exception"
+    )
