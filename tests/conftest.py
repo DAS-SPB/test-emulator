@@ -98,7 +98,7 @@ def mock_find_order(mocker):
                     }
                 ],
                 "subclass": "subclass",
-                "callback_url": "https://webhook.site/94385313-18e0-4617-99dd-db78a2f86081",
+                "callback_url": "https://example.com/callback",
                 "reference": "order reference",
                 "status": response_status
             }
