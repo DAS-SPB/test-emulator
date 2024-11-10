@@ -4,6 +4,7 @@ from unittest.mock import AsyncMock
 
 from main import temu
 from temu.api.models.payment import PaymentRequestModel, DataModel, CurrencyEnum, CustomerModel, SubclassEnum
+from temu.api.models.check_status import CheckStatusRequestModel, SubclassEnum
 
 
 @pytest.fixture
@@ -73,4 +74,42 @@ def payment_request_case_103():
         ],
         subclass=SubclassEnum.subclass,
         callback_url="https://example.com/callback"
+    ).model_dump()
+
+
+@pytest.fixture
+def mock_find_order(mocker):
+    def _mock_find_order(response_amount=None, response_status=None, side_effect=None):
+        mock_find = mocker.patch("temu.db.database.find_order", new_callable=AsyncMock)
+        if side_effect is not None:
+            mock_find.side_effect = side_effect
+        else:
+            mock_find.return_value = {
+                "_id": {"$oid": "673092eacc53dc3ccf5cb758"},
+                "order_id": "12345",
+                "data": {
+                    "amount": response_amount,
+                    "currency": "EUR"
+                },
+                "customer": [
+                    {
+                        "full_name": "Fool Name",
+                        "email": "email@email.com"
+                    }
+                ],
+                "subclass": "subclass",
+                "callback_url": "https://webhook.site/94385313-18e0-4617-99dd-db78a2f86081",
+                "reference": "order reference",
+                "status": response_status
+            }
+        return mock_find
+
+    return _mock_find_order
+
+
+@pytest.fixture
+def valid_check_status_request():
+    return CheckStatusRequestModel(
+        order_id="12345",
+        subclass=SubclassEnum.subclass
     ).model_dump()
