@@ -19,6 +19,7 @@ python-dotenv = "^1.0.1"
 pytest-mock = "^3.14.0"
 pyyaml = "^6.0.2"
 email-validator = "^2.2.0"
+pytest-cov = "^6.0.0"
 
 
 [build-system]

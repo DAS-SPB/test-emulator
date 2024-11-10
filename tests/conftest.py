@@ -5,6 +5,7 @@ from unittest.mock import AsyncMock
 from main import temu
 from temu.api.models.payment import PaymentRequestModel, DataModel, CurrencyEnum, CustomerModel, SubclassEnum
 from temu.api.models.check_status import CheckStatusRequestModel, SubclassEnum
+from temu.api.models.update_order import UpdateOrderRequestModel
 
 
 @pytest.fixture
@@ -112,4 +113,43 @@ def valid_check_status_request():
     return CheckStatusRequestModel(
         order_id="12345",
         subclass=SubclassEnum.subclass
+    ).model_dump()
+
+
+@pytest.fixture
+def mock_update_order(mocker):
+    def _mock_update_order(request_amount=None, request_status=None, side_effect=None):
+        mock_update = mocker.patch("temu.db.database.update_order", new_callable=AsyncMock)
+        if side_effect is not None:
+            mock_update.side_effect = side_effect
+        else:
+            mock_update.return_value = {
+                "_id": {"$oid": "673092eacc53dc3ccf5cb758"},
+                "order_id": "12345",
+                "data": {
+                    "amount": request_amount,
+                    "currency": "EUR"
+                },
+                "customer": [
+                    {
+                        "full_name": "Fool Name",
+                        "email": "email@email.com"
+                    }
+                ],
+                "subclass": "subclass",
+                "callback_url": "https://example.com/callback",
+                "reference": "order reference",
+                "status": request_status
+            }
+        return mock_update
+
+    return _mock_update_order
+
+
+@pytest.fixture
+def valid_update_order_request():
+    return UpdateOrderRequestModel(
+        order_id="12345",
+        status="SUCCESS",
+        amount=150.20
     ).model_dump()
