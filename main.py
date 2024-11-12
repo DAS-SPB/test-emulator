@@ -1,5 +1,4 @@
 import logging.config
-import config
 import os
 import yaml
 from fastapi import FastAPI
