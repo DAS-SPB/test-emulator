@@ -6,7 +6,7 @@ from fastapi import status
 from temu.api.signature.signature import signature_creation
 from temu.db.connection import client as motor_client
 
-DATABASE_NAME = "test_test-emulator"
+DATABASE_NAME = "test-emulator"
 COLLECTION_NAME = "orders"
 
 
