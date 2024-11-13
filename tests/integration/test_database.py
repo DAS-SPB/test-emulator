@@ -1,9 +1,8 @@
 import pytest
-import sys
 import asyncio
 import pytest_asyncio
 from motor.motor_asyncio import AsyncIOMotorCollection
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 from typing import Dict, Any
 from fastapi import status
 
@@ -12,9 +11,6 @@ from temu.db.connection import client as motor_client
 
 DATABASE_NAME = "test-emulator"
 COLLECTION_NAME = "orders"
-
-if sys.platform.startswith('win') and sys.version_info >= (3, 8):
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
 @pytest.fixture(scope="session")
@@ -35,7 +31,7 @@ async def test_db():
 @pytest_asyncio.fixture
 async def async_client():
     from main import temu
-    async with AsyncClient(app=temu, base_url="http://test.test-emulator") as client:
+    async with AsyncClient(transport=ASGITransport(app=temu), base_url="http://test.test-emulator") as client:
         yield client
 
 
