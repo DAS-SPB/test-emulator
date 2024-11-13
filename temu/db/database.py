@@ -40,9 +40,7 @@ async def update_order(data: dict, collection: AsyncIOMotorCollection) -> Update
         "order_id": data.get("order_id")
     }
     data_copy = {
-        "data": {
-            "amount": data.get("amount")
-        },
+        "data.amount": data.get("amount"),
         "status": data.get("status")
     }
     try:

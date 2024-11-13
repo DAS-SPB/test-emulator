@@ -36,15 +36,7 @@ async def test_successful_callback_request(mock_post, mock_find_order, client):
     found_order.assert_called_once()
     mock_post.assert_called_once_with(
         url="https://example.com/callback",
-        json={
-            "payment": {
-                "reference": "order reference",
-                "status": "SUCCESS",
-                "amount": 188.10
-            },
-            "code": 10,
-            "message": "Callback"
-        },
+        json=callback_data,
         headers={"x-signature": generated_signature}
     )
 
@@ -79,15 +71,7 @@ async def test_callback_request_case_301(mock_post, mock_find_order, client):
     found_order.assert_called_once()
     mock_post.assert_called_once_with(
         url="https://example.com/callback",
-        json={
-            "payment": {
-                "reference": None,
-                "status": "SUCCESS",
-                "amount": 301
-            },
-            "code": None,
-            "message": None
-        },
+        json=callback_data,
         headers={"x-signature": generated_signature}
     )
 
