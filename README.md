@@ -123,7 +123,7 @@ Before running the application, make sure you have the following prerequisites i
 - Python 3.10+ (3.12 recommended).
 - MongoDB.
 
-## Installation
+### Installation
 
 1. Install Poetry if you haven't already. You can do this by following the [Poetry installation guide](https://python-poetry.org/docs/#installation).
 
