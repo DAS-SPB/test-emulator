@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "testemulator"
-version = "0.1.0"
-description = "Тестовый эмулятор"
+version = "1.0.0"
+description = "Test emulator"
 authors = ["Anton, Kirill"]
 readme = "README.md"
 
