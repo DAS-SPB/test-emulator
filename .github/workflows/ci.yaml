@@ -36,12 +36,6 @@ jobs:
           pip install poetry
           poetry install
 
-      #      - name: Set environment variables
-      #        env:
-      #          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      #          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      #        run: echo "Environment variables set"
-
       - name: Run unit tests
         run: |
           poetry run pytest tests/unit --cov=. --cov-report=xml
