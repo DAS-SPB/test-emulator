@@ -17,6 +17,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
     steps:
       - name: Checkout code
@@ -32,13 +35,12 @@ jobs:
           pip install --upgrade pip
           pip install poetry
           poetry install
-#          echo "source $(poetry env info --path)/bin/activate" >> $GITHUB_ENV
 
-      - name: Set environment variables
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        run: echo "Environment variables set"
+      #      - name: Set environment variables
+      #        env:
+      #          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      #          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      #        run: echo "Environment variables set"
 
       - name: Run unit tests
         run: |
