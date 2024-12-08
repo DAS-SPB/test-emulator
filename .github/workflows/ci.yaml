@@ -32,6 +32,7 @@ jobs:
           pip install --upgrade pip
           pip install poetry
           poetry install
+#          echo "source $(poetry env info --path)/bin/activate" >> $GITHUB_ENV
 
       - name: Set environment variables
         env:
@@ -41,11 +42,11 @@ jobs:
 
       - name: Run unit tests
         run: |
-          pytest tests/unit --cov=. --cov-report=xml
+          poetry run pytest tests/unit --cov=. --cov-report=xml
 
       - name: Run integration tests
         run: |
-          pytest tests/integration --cov=. --cov-report=term
+          poetry run pytest tests/integration --cov=. --cov-report=term
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v3
